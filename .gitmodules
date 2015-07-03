@@ -1,0 +1,3 @@
+[submodule "node-http-parser"]
+	path = node-http-parser
+	url = https://github.com/gregnr/node-http-parser.git
