@@ -16,3 +16,8 @@ HTTP Network Monitor runs on Node.js. Make sure you have both [Node.js](https://
 1. Pull new changes: `git pull`
 2. Update [node-http-parser](https://github.com/gregnr/node-http-parser) submodule to correct commit: `git submodule update`
 3. Install any new dependencies from package.json file: `npm install`
+
+### Running program
+Since we will be reading network packets from the kernel, you need root access to run the monitor.
+
+1. Run the program: `sudo node main.js`
