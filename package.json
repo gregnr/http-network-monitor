@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "pcap": "^2.0.1"
+  }
+}
