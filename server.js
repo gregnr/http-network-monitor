@@ -4,7 +4,7 @@ var pg = require("pg");
 
 var conString = "postgres://monitor:monitor@localhost/monitor";
 
-app.get("/api/v1/contentTypes/", function (req, res) {
+app.get("/api/v1/hostCount/", function (req, res) {
 
     pg.connect(conString, function(err, client, done) {
 
@@ -12,8 +12,10 @@ app.get("/api/v1/contentTypes/", function (req, res) {
             console.error("Could not connect to postgres", err);
             return;
         }
+        
+        var queryString = "SELECT host, COUNT(*) AS count FROM MessageExchange GROUP BY host ORDER BY count DESC;"
       
-        client.query("SELECT NOW() AS \"theTime\"", function(err, result) {
+        client.query(queryString, function(err, result) {
         
             done();
             
@@ -21,12 +23,10 @@ app.get("/api/v1/contentTypes/", function (req, res) {
                 console.error("Error running query", err);
                 return;
             }
-            
-            console.log(result.rows[0].theTime);
+
+            res.send(JSON.stringify(result.rows));
         });
     });
-
-    res.send("Hello World!");
 });
 
 var server = app.listen(80, function () {

@@ -75,7 +75,7 @@ var conString = "postgres://monitor:monitor@localhost/monitor";
                 var content_encoding = response.headers["content-encoding"];
                 var server = response.headers["server"];
                 var response_timestamp = new Date().getTime() / 1000; //TODO: Change
-                //var response_body_location = 
+                var response_body_location = null;
                 
                 var queryTemplate = "INSERT INTO MessageExchange (" + 
                                     "   source_ipaddress," + 
@@ -91,9 +91,10 @@ var conString = "postgres://monitor:monitor@localhost/monitor";
                                     "   content_type," + 
                                     "   content_encoding," + 
                                     "   server," + 
-                                    "   response_timestamp" +
+                                    "   response_timestamp," +
+                                    "   response_body_location" + 
                                     ") Values (" + 
-                                    "   %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s" + 
+                                    "   %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s" + 
                                     ");";
                                     
                 var queryString = util.format(queryTemplate,
@@ -110,7 +111,8 @@ var conString = "postgres://monitor:monitor@localhost/monitor";
                         content_type            ? util.format("'%s'", content_type) : "NULL",
                         content_encoding        ? util.format("'%s'", content_encoding) : "NULL",
                         server                  ? util.format("'%s'", server) : "NULL",
-                        response_timestamp      ? util.format("to_timestamp(%d)", request_timestamp) : "NULL"
+                        response_timestamp      ? util.format("to_timestamp(%d)", request_timestamp) : "NULL",
+                        response_body_location  ? util.format("'%s'", response_body_location) : "NULL"
                 );
                 
                 pg.connect(conString, function(err, client, done) {
