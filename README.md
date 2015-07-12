@@ -11,8 +11,8 @@ HTTP Network Monitor runs on Node.js. Make sure you have both [Node.js](https://
     1. Update package lists: `sudo apt-get update`
     2. Install libpcap: `sudo apt-get install libpcap-dev`
     3. Install g++: `sudo apt-get install g++`
-2. Clone repository: `git clone https://github.com/gregnr/node-http-parser.git`
-3. Navigate into directory: `cd node-http-parser`
+2. Clone repository: `git clone https://github.com/gregnr/http-network-monitor.git`
+3. Navigate into directory: `cd http-network-monitor`
 4. Initialize [node-http-parser](https://github.com/gregnr/node-http-parser) submodule: `git submodule update --init`
 5. Install dependencies from package.json file: `npm install`
 
