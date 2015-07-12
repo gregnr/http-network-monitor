@@ -62,24 +62,28 @@ var conString = "postgres://monitor:monitor@localhost/monitor";
                 console.log();
                 
                 var source_ipaddress = sourceAddress;
+                var source_port = sourcePort;
                 var destination_ipaddress = destinationAddress;
+                var destination_port = destinationPort;
                 var request_type = request.method;
                 var url = request.url;
                 var http_version = request.version;
                 var host = request.headers["host"];
                 var user_agent = request.headers["user-agent"];
-                var request_timestamp = new Date().getTime() / 1000; //TODO: Change
+                var request_timestamp = new Date().getTime() / 1000; //TODO: Change to actual request time
                 var status_code = response.statusCode;
-                var content_size = response.headers["content-size"];
+                var content_length = response.headers["content-length"];
                 var content_type = response.headers["content-type"];
                 var content_encoding = response.headers["content-encoding"];
                 var server = response.headers["server"];
-                var response_timestamp = new Date().getTime() / 1000; //TODO: Change
+                var response_timestamp = new Date().getTime() / 1000; //TODO: Change to actual response time
                 var response_body_location = null;
                 
                 var queryTemplate = "INSERT INTO MessageExchange (" + 
                                     "   source_ipaddress," + 
+                                    "   source_port," + 
                                     "   destination_ipaddress," + 
+                                    "   destination_port," + 
                                     "   request_type," + 
                                     "   url," + 
                                     "   http_version," + 
@@ -87,19 +91,21 @@ var conString = "postgres://monitor:monitor@localhost/monitor";
                                     "   user_agent," + 
                                     "   request_timestamp," + 
                                     "   status_code," + 
-                                    "   content_size," + 
+                                    "   content_length," + 
                                     "   content_type," + 
                                     "   content_encoding," + 
                                     "   server," + 
                                     "   response_timestamp," +
                                     "   response_body_location" + 
                                     ") Values (" + 
-                                    "   %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s" + 
+                                    "   %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s" + 
                                     ");";
                                     
                 var queryString = util.format(queryTemplate,
                         source_ipaddress        ? util.format("'%s'", source_ipaddress) : "NULL",
+                        source_port             ? util.format("%d", source_port) : "NULL",
                         destination_ipaddress   ? util.format("'%s'", destination_ipaddress) : "NULL",
+                        destination_port        ? util.format("%d", destination_port) : "NULL",
                         request_type            ? util.format("'%s'", request_type) : "NULL",
                         url                     ? util.format("'%s'", url) : "NULL",
                         http_version            ? util.format("'%s'", http_version) : "NULL",
@@ -107,7 +113,7 @@ var conString = "postgres://monitor:monitor@localhost/monitor";
                         user_agent              ? util.format("'%s'", user_agent) : "NULL",
                         request_timestamp       ? util.format("to_timestamp(%d)", request_timestamp) : "NULL",
                         status_code             ? util.format("%d", status_code) : "NULL",
-                        content_size            ? util.format("%d", content_size) : "NULL",
+                        content_length          ? util.format("%d", content_length) : "NULL",
                         content_type            ? util.format("'%s'", content_type) : "NULL",
                         content_encoding        ? util.format("'%s'", content_encoding) : "NULL",
                         server                  ? util.format("'%s'", server) : "NULL",
