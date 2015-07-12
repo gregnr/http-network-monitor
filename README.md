@@ -32,17 +32,12 @@ HTTP Network Monitor runs on Node.js. Make sure you have both [Node.js](https://
 6. Create a password for the postgres user: `\password postgres` (Allows for local connections to psql)
 7. Quit postgres: `\q`
 8. Return to regular user: `exit`
+9. Allow local connections by editing the config file: `sudo vim /etc/postgresql/9.3/main/pg_hba.conf`
+10. Change line `local all postgres peer` to `local all postgres md5`
+11. Save and exit vim
+12. Restart postgres: `sudo service postgresql restart`
+13. Add the MessageExchange table and grant permissions to "monitor" user (using the SQL schema file):  `psql -d monitor -U postgres -W -a -f database_schema.sql`
 
-### postgres: allow local connections
-1. Edit the config file: `sudo vim /etc/postgresql/9.3/main/pg_hba.conf`
-2. Change line `local all postgres peer` to `local all postgres md5`
-3. Save and exit vim
-4. Restart postgres: `sudo service postgresql restart`
-
-### postgres: Add the MessageExchange table and grant permissions to "monitor" user
-1. Add the MessageExchange table from the SQL schema file:  `psql -d monitor -U postgres -W -a -f database_schema.sql`
-2. Connect to psql as postgres user: `psql -d monitor -U postgres -W`
-3. Give the "monitor" user permissions over the MessageExchange table: `GRANT SELECT, INSERT on MessageExchange to monitor;`
 
 ### Pulling new changes
 1. Pull new changes: `git pull`
