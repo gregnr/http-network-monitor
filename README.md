@@ -23,20 +23,26 @@ HTTP Network Monitor runs on Node.js. Make sure you have both [Node.js](https://
 4. Initialize [node-http-parser](https://github.com/gregnr/node-http-parser) submodule: `git submodule update --init`
 5. Install dependencies from package.json file: `npm install`
 
-### Setup postgres
+### postgres: initial setup
 1. Install postgres: `sudo apt-get install postgresql postgresql-contrib`
 2. Login as root user for postgres: `sudo -i -u postgres`
-Note: A number of commands can be executed directly from command line, or from within psql (just with different syntax). The two commands below are executable from command line.
 3. Create the "monitor" postgres user: `createuser -P -s -e monitor`, you will be prompted for a password
 4. Create a new postgres db: `createdb monitor`
 5. Open postgres: `psql`
-6. Create a password for the postgres user: `\password postgres` (On Linux there is no password by default and local connections from this user will fail)
-7. Quit postgres: `\q` 
+6. Create a password for the postgres user: `\password postgres` (Allows for local connections to psql)
+7. Quit postgres: `\q`
 8. Return to regular user: `exit`
-9. Allow local connections to postgres: `sudo vim /etc/postgresql/9.3/main/pg_hba.conf` and change line `local   all             postgres                                peer` to `local   all             postgres                                md5`
-10. Add the MessageExchange table from the SQL schema file:  `psql -d monitor -U postgres -W -a -f database_schema.sql`
-11. Connect to psql as postgres user: `psql -d monitor -U postgres -W`
-12. Give the "monitor" user permissions over the MessageExchange table: `GRANT SELECT, INSERT on MessageExchange to monitor;`
+
+### postgres: allow local connections
+1. Edit the config file: `sudo vim /etc/postgresql/9.3/main/pg_hba.conf`
+2. Change line `local all postgres peer` to `local all postgres md5`
+3. Save and exit vim
+4. Restart postgres: `sudo service postgresql restart`
+
+### postgres: Add the MessageExchange table and grant permissions to "monitor" user
+1. Add the MessageExchange table from the SQL schema file:  `psql -d monitor -U postgres -W -a -f database_schema.sql`
+2. Connect to psql as postgres user: `psql -d monitor -U postgres -W`
+3. Give the "monitor" user permissions over the MessageExchange table: `GRANT SELECT, INSERT on MessageExchange to monitor;`
 
 ### Pulling new changes
 1. Pull new changes: `git pull`
