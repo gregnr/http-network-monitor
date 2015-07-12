@@ -14,24 +14,23 @@ var pcap = require("pcap"),
 console.log("Listening for packets");
 
 //Connect to database
-var conString = "postgres://monitor@localhost/monitor";
+var conString = "postgres://monitor:monitor@localhost/monitor";
 
-var client = new pg.Client(conString);
-client.connect(function(err) {
-
-    if (err) {
-        console.error('Could not connect to postgres', err);
-        return;
-    }
-    
     var sessionCount = 0;
 
     tcp_tracker.on("session", function (session) {
 
         console.log("Session number: ", ++sessionCount);
 
-        console.log("Start of session between " + session.src_name + " and " + session.dst_name);
+        console.log("Start of session between " + session.src + " and " + session.dst);
         
+        var sourceSplit = session.src.split(":");
+        var sourceAddress = sourceSplit[0];
+        var sourcePort = sourceSplit[1];
+        
+        var destinationSplit = session.dst.split(":");
+        var destinationAddress = destinationSplit[0];
+        var destinationPort = destinationSplit[1];
         
         //Private variables:
         
@@ -61,6 +60,74 @@ client.connect(function(err) {
                 console.log("Response:", response.statusCode);
                 console.log("Response Headers:", response.headers);
                 console.log();
+                
+                var source_ipaddress = sourceAddress;
+                var destination_ipaddress = destinationAddress;
+                var request_type = request.method;
+                var url = request.url;
+                var http_version = request.version;
+                var host = request.headers["host"];
+                var user_agent = request.headers["user-agent"];
+                var request_timestamp = new Date().getTime() / 1000; //TODO: Change
+                var status_code = response.statusCode;
+                var content_size = response.headers["content-size"];
+                var content_type = response.headers["content-type"];
+                var content_encoding = response.headers["content-encoding"];
+                var server = response.headers["server"];
+                var response_timestamp = new Date().getTime() / 1000; //TODO: Change
+                //var response_body_location = 
+                
+                var queryTemplate = "INSERT INTO MessageExchange (" + 
+                                    "   source_ipaddress," + 
+                                    "   destination_ipaddress," + 
+                                    "   request_type," + 
+                                    "   url," + 
+                                    "   http_version," + 
+                                    "   host," + 
+                                    "   user_agent," + 
+                                    "   request_timestamp," + 
+                                    "   status_code," + 
+                                    "   content_size," + 
+                                    "   content_type," + 
+                                    "   content_encoding," + 
+                                    "   server," + 
+                                    "   response_timestamp" +
+                                    ") Values (" + 
+                                    "   %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s" + 
+                                    ");";
+                                    
+                var queryString = util.format(queryTemplate,
+                        source_ipaddress        ? util.format("'%s'", source_ipaddress) : "NULL",
+                        destination_ipaddress   ? util.format("'%s'", destination_ipaddress) : "NULL",
+                        request_type            ? util.format("'%s'", request_type) : "NULL",
+                        url                     ? util.format("'%s'", url) : "NULL",
+                        http_version            ? util.format("'%s'", http_version) : "NULL",
+                        host                    ? util.format("'%s'", host) : "NULL",
+                        user_agent              ? util.format("'%s'", user_agent) : "NULL",
+                        request_timestamp       ? util.format("to_timestamp(%d)", request_timestamp) : "NULL",
+                        status_code             ? util.format("%d", status_code) : "NULL",
+                        content_size            ? util.format("%d", content_size) : "NULL",
+                        content_type            ? util.format("'%s'", content_type) : "NULL",
+                        content_encoding        ? util.format("'%s'", content_encoding) : "NULL",
+                        server                  ? util.format("'%s'", server) : "NULL",
+                        response_timestamp      ? util.format("to_timestamp(%d)", request_timestamp) : "NULL"
+                );
+                
+                pg.connect(conString, function(err, client, done) {
+                
+                    var query = client.query(queryString, function(err, result) {
+                    
+                        done();
+                        
+                        if (err) {
+                            console.error("Error running query", err);
+                            return;
+                        }
+                        
+                        console.log("Database insert successful");
+                        console.log();
+                    });
+                });
             }
         };
         
@@ -142,4 +209,3 @@ client.connect(function(err) {
         var packet = pcap.decode.packet(raw_packet);
         tcp_tracker.track_packet(packet);
     });
-});
