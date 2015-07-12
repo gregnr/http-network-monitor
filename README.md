@@ -24,4 +24,4 @@ HTTP Network Monitor runs on Node.js. Make sure you have both [Node.js](https://
 ### Running program
 Since we will be reading network packets from the kernel, you need root access to run the monitor.
 
-1. Run the program: `sudo node main.js`
+1. Run the program: `sudo node monitor.js`
