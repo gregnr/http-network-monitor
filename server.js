@@ -1,6 +1,5 @@
 var util = require("util");
 var express = require("express");
-var app = express();
 var pg = require("pg");
 
 var conString = "postgres://monitor:monitor@localhost/monitor";
@@ -12,6 +11,11 @@ var endpointQueries = {
     "imagetypes": "SELECT (regexp_matches(content_type,'image/(.*)'))[1] as image_type, count(*) AS total FROM MessageExchange GROUP BY content_type ORDER BY total DESC;",
     "useragents": "SELECT user_agent, COUNT(*) AS total FROM MessageExchange GROUP BY user_agent ORDER BY total DESC limit 20;"
 };
+
+var app = express();
+
+//Serve static files from static directory
+app.use(express.static("static"));
 
 //Loop through endpoints and register them with express app
 for (var endpoint in endpointQueries) {
@@ -27,6 +31,8 @@ for (var endpoint in endpointQueries) {
             //Add endpoint to express app
             app.get(util.format("/api/v1/%s/", endpoint), function (req, res) {
 
+                res.header("Content-Type", "application/json");
+                
                 //Connect to PostgreSQL database
                 pg.connect(conString, function(err, client, done) {
 
@@ -42,6 +48,7 @@ for (var endpoint in endpointQueries) {
                         
                         if (err) {
                             console.error("Error running query", err);
+                            res.send(JSON.stringify({error: err}));
                             return;
                         }
                         
@@ -58,8 +65,8 @@ for (var endpoint in endpointQueries) {
 //Start express app
 var server = app.listen(80, function () {
 
-  var host = server.address().address;
-  var port = server.address().port;
+    var host = server.address().address;
+    var port = server.address().port;
 
-  console.log('App listening at http://%s:%s', host, port);
+    console.log("App listening at http://%s:%s", host, port);
 });
