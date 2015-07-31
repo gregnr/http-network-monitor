@@ -9,7 +9,7 @@ var endpointQueries = {
     "hourlytraffic": "SELECT DATE_PART('hour', response_timestamp) as hour, SUM(content_length) AS content_length_total FROM MessageExchange  WHERE (now() - response_timestamp) < (INTERVAL '1 day') GROUP BY DATE_PART('hour', response_timestamp) ORDER BY hour DESC;",
     "contenttypes": "SELECT content_type, count(*) AS total_responses FROM MessageExchange WHERE content_type IS NOT NULL GROUP BY content_type ORDER BY total_responses DESC;",
  	"recentimages": "SELECT (regexp_matches(content_type,'image/(.*)'))[1] as image_type, concat(host, url), response_timestamp FROM MessageExchange WHERE content_length > 50000 ORDER BY response_timestamp DESC limit 100;",
-    "webservers": "SELECT server, count(*) AS total_responses FROM MessageExchange WHERE server IS NOT NULL GROUP BY server ORDER BY total_responses DESC;",
+    "webservers": "SELECT server, count(*) AS total_responses FROM MessageExchange WHERE server IS NOT NULL GROUP BY server ORDER BY total_responses DESC limit 20;",
     "imagetypes": "SELECT (regexp_matches(content_type,'image/(.*)'))[1] as image_type, count(*) AS total FROM MessageExchange GROUP BY content_type ORDER BY total DESC;",
     "domaindata": "SELECT (regexp_matches(host, '[^.]+.[^.]+$'))[1] as domain, SUM(content_length) AS content_length_total FROM MessageExchange WHERE content_length>0 GROUP BY domain ORDER BY content_length_total DESC limit 20;",
     "useragents": "SELECT user_agent, COUNT(*) AS total FROM MessageExchange GROUP BY user_agent ORDER BY total DESC limit 20;"

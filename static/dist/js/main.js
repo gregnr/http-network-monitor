@@ -184,7 +184,6 @@ $(document).ready(function() {
             ykeys: ['total_responses'],
             labels: ['Number of servers'],
             hideHover: 'auto',
-            gridTextSize: 8,
             resize: true
         });
     });
