@@ -48,7 +48,9 @@ var createPieChart = function(chartElement, dataSet) {
     });
 };
 
-var addDataColors = function(data) {
+var addDataColors = function(data, colorOffset) {
+
+    colorOffset = colorOffset || 70;
 
     var makeColor = function(colorNum, colors, offset) {
         if (colors < 1) colors = 1; // defaults to one color - avoid divide by zero
@@ -58,9 +60,8 @@ var addDataColors = function(data) {
     for (var i = 0; i < data.length; i++) {
         
         var row = data[i];
-        var offset = 70;
         
-        row.color = "hsl(" + makeColor((i + offset + 360/2 * (i % 2)) % 360, data.length, 40) + ", 90%,70% )";
+        row.color = "hsl(" + makeColor((i + colorOffset + 360/2 * (i % 2)) % 360, data.length, 40) + ", 90%, 70% )";
     }
 }
 
@@ -146,7 +147,7 @@ $(document).ready(function() {
             });
         }
         
-        addDataColors(flotData);
+        addDataColors(flotData, 20);
         
         var chartElement = $("#content-type-pie-chart");
         
