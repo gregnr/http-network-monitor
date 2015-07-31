@@ -48,6 +48,23 @@ var createPieChart = function(chartElement, dataSet) {
     });
 };
 
+var addDataColors = function(data, colorOffset) {
+
+    colorOffset = colorOffset || 70;
+
+    var makeColor = function(colorNum, colors, offset) {
+        if (colors < 1) colors = 1; // defaults to one color - avoid divide by zero
+        return colorNum * (360 / colors) + offset % 360;
+    }
+
+    for (var i = 0; i < data.length; i++) {
+        
+        var row = data[i];
+        
+        row.color = "hsl(" + makeColor((i + colorOffset + 360/2 * (i % 2)) % 360, data.length, 40) + ", 90%, 70% )";
+    }
+}
+
 $(document).ready(function() {
 
 	//Following the numbering convention from the Google Doc :)
@@ -130,6 +147,8 @@ $(document).ready(function() {
             });
         }
         
+        addDataColors(flotData, 20);
+        
         var chartElement = $("#content-type-pie-chart");
         
         createPieChart(chartElement, flotData);
@@ -190,6 +209,8 @@ $(document).ready(function() {
             });
         }
         
+        addDataColors(flotData);
+        
         var chartElement = $("#image-type-pie-chart");
         
         createPieChart(chartElement, flotData);
@@ -233,6 +254,8 @@ $(document).ready(function() {
                 data: row["total"]
             });
         }
+        
+        addDataColors(flotData);
         
         var chartElement = $("#user-agent-pie-chart");
         
