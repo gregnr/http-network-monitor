@@ -3,7 +3,7 @@ var createPieChart = function(chartElement, dataSet) {
 	// To avoid an over-filled chart, after a certain # of items,
 	//		group them into an "other" category
 	// This assumes a descending list order list
-	var maxElements = 20;
+	var maxElements = 15;
 	if(dataSet.length > maxElements + 1){
 		for(var i = 0; i < dataSet.length; i++){
 			if(i == maxElements){
