@@ -135,6 +135,22 @@ $(document).ready(function() {
         createPieChart(chartElement, flotData);
     });
     
+    //4. Load recent images chart
+    $.ajax({
+        url: "../api/v1/recentimages/",
+        dataType: "json"
+    }).then(function(data) {
+        
+        // Get list in the html
+        var $this = $("#recent-image-list").empty();
+		// instead of .each, I went on the premise that your data is returned exactly as stated above,
+		// in which case, a simple old school for statement is easiest
+		for (x in data) {
+		    // Could not get the link working :(
+		    $("<li />").html("<a href=\"http://"+data[x].concat+"\" target=\"_blank\">"+data[x].concat+"</a>").appendTo($this);
+		    //$("<li />").html(data[x].concat).appendTo($this);
+		};
+    });
     
     //5. Load server chart
     $.ajax({
