@@ -6,6 +6,8 @@ HTTP Network Monitor runs on Node.js. Make sure you have both [Node.js](https://
 
 - The developers of this project use a [Raspberry Pi](https://www.raspberrypi.org/) as the network monitor. [Here](http://joshondesign.com/2013/10/23/noderpi) are Pi-specific instructions on installing Node.js and NPM.
 
+<img src="https://cloud.githubusercontent.com/assets/4133076/9121156/5e74019c-3c35-11e5-9a45-9f9cf12763b7.png" />
+
 ### Setup
 1. Install libraries:
     1. Update package lists: `sudo apt-get update`
